@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
@@ -38,7 +38,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation("io.ktor:ktor-client-okhttp:2.3.12")
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -52,9 +52,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             
             // Ktor dependencies
-            implementation("io.ktor:ktor-client-core:2.3.12")
-            implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
-            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
 
             implementation("spoof:lib")
         }
@@ -64,10 +64,10 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-            implementation("io.ktor:ktor-client-cio:2.3.12")
+            implementation(libs.ktor.client.cio)
         }
         iosMain.dependencies {
-            implementation("io.ktor:ktor-client-darwin:2.3.12")
+            implementation(libs.ktor.client.darwin)
         }
     }
 }
