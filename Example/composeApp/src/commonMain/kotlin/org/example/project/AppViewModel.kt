@@ -30,9 +30,9 @@ class AppViewModel : ViewModel() {
     }
 
     private val _uiState = MutableStateFlow(AppUiState())
-    private var job: Job? = null
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
 
+    private var job: Job? = null
     fun fetchPosts() {
         job?.cancel()
 
