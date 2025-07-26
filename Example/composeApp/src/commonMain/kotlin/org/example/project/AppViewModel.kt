@@ -10,6 +10,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
@@ -29,19 +30,28 @@ class AppViewModel : ViewModel() {
 
     fun fetchPosts() {
         viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true, errorMessage = null)
+            }
+
             runCatching {
-                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-                val posts: List<Post> = client.get("https://jsonplaceholder.typicode.com/posts").body()
-                _uiState.value = _uiState.value.copy(
-                    posts = posts,
-                    isLoading = false,
-                    errorMessage = null
-                )
+                client.get("https://jsonplaceholder.typicode.com/posts")
+                    .body<List<Post>>()
+            }.onSuccess { posts ->
+                _uiState.update {
+                    it.copy(
+                        posts = posts,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                }
             }.onFailure { e ->
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Error: ${e.message}"
-                )
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Error: ${e.message}"
+                    )
+                }
             }
         }
     }
