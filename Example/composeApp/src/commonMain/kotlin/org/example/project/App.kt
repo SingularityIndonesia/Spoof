@@ -1,42 +1,25 @@
 package org.example.project
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        var posts by remember { mutableStateOf<List<Post>>(emptyList()) }
-        var isLoading by remember { mutableStateOf(false) }
-        var errorMessage by remember { mutableStateOf<String?>(null) }
-
-        val scope = rememberCoroutineScope()
-
-        val client = remember {
-            HttpClient {
-                install(ContentNegotiation) {
-                    json(Json {
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    })
-                }
-            }
-        }
+        val viewModel: AppViewModel = viewModel()
+        val uiState by viewModel.uiState.collectAsState()
 
         Scaffold(
             bottomBar = {
@@ -46,19 +29,9 @@ fun App() {
                         .navigationBarsPadding()
                         .padding(16.dp),
                     onClick = {
-                        scope.launch {
-                            try {
-                                isLoading = true
-                                errorMessage = null
-                                posts = client.get("https://jsonplaceholder.typicode.com/posts").body()
-                            } catch (e: Exception) {
-                                errorMessage = "Error: ${e.message}"
-                            } finally {
-                                isLoading = false
-                            }
-                        }
+                        viewModel.fetchPosts()
                     },
-                    enabled = !isLoading
+                    enabled = !uiState.isLoading
                 ) {
                     Text("Fetch Posts")
                 }
@@ -68,68 +41,53 @@ fun App() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(it)
-                    .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                when {
-                    isLoading -> {
-                        CircularProgressIndicator()
-                    }
+                AnimatedVisibility(uiState.isLoading) {
+                    CircularProgressIndicator()
+                }
 
-                    errorMessage != null -> {
-                        Text(
-                            text = errorMessage!!,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
+                AnimatedVisibility(uiState.errorMessage != null) {
+                    Text(
+                        text = uiState.errorMessage!!,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
 
-                    posts.isNotEmpty() -> {
+                AnimatedVisibility(uiState.posts.isEmpty()) {
+                    Text("Click the button to fetch posts from JSONPlaceholder")
+                }
+
+                uiState.posts.map { post ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .verticalScroll(rememberScrollState())
+                            modifier = Modifier.padding(12.dp)
                         ) {
-                            posts.forEach { post ->
-                                Card(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 4.dp)
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(12.dp)
-                                    ) {
-                                        Text(
-                                            text = "Post #${post.id} (User: ${post.userId})",
-                                            style = MaterialTheme.typography.labelMedium
-                                        )
-                                        Text(
-                                            text = post.title,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            modifier = Modifier.padding(vertical = 4.dp)
-                                        )
-                                        Text(
-                                            text = post.body,
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    }
-                                }
-                            }
+                            Text(
+                                text = "Post #${post.id} (User: ${post.userId})",
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                            Text(
+                                text = post.title,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                            Text(
+                                text = post.body,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         }
                     }
-
-                    else -> {
-                        Text("Click the button to fetch posts from JSONPlaceholder")
-                    }
                 }
-            }
-        }
-
-        DisposableEffect(Unit) {
-            onDispose {
-                client.close()
             }
         }
     }
