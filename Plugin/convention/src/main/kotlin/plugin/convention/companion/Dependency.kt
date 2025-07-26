@@ -36,6 +36,16 @@ class DependencyScope(private val project: Project) {
         }
     }
 
+    fun desktop(bloc: KotlinDependencyHandler.() -> Unit = {}) {
+        with(project) {
+            withKotlinMultiplatformExtension {
+                sourceSets {
+                    jvmMain.dependencies(bloc)
+                }
+            }
+        }
+    }
+
     fun test(bloc: KotlinDependencyHandler.() -> Unit = {}) {
         with(project) {
             withKotlinMultiplatformExtension {

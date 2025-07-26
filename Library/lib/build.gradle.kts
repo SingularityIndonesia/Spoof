@@ -38,7 +38,23 @@ dependency {
         implementation(libs.androidx.lifecycle.runtimeCompose)
         implementation(libs.androidx.lifecycle.viewmodel.compose)
 
+        implementation(libs.ktor.client.core)
+        implementation(libs.ktor.client.content.negotiation)
+        implementation(libs.ktor.serialization.kotlinx.json)
+
         implementation(project(":core"))
+    }
+
+    android {
+        implementation(libs.ktor.client.okhttp)
+    }
+
+    ios {
+        implementation(libs.ktor.client.darwin)
+    }
+
+    desktop {
+        implementation(libs.ktor.client.cio)
     }
 }
 

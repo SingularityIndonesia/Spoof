@@ -9,6 +9,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import ktor.SnifferPlugin
 
 val LocalHttpClient = staticCompositionLocalOf<HttpClient> { error("Not provider") }
 
@@ -16,22 +17,26 @@ val LocalHttpClient = staticCompositionLocalOf<HttpClient> { error("Not provider
 fun ContextScope(
     content: @Composable () -> Unit
 ) {
-    val httpClient = remember {
-        HttpClient {
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    }
-                )
-            }
-        }
-    }
+    val httpClient = remember { defaultHttpClient() }
 
     CompositionLocalProvider(LocalHttpClient provides httpClient) {
         Sniffer {
             content.invoke()
         }
+    }
+}
+
+fun defaultHttpClient(): HttpClient {
+    return HttpClient {
+        install(ContentNegotiation) {
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                }
+            )
+        }
+
+        install(SnifferPlugin)
     }
 }
