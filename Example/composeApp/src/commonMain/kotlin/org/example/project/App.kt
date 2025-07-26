@@ -23,22 +23,22 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        val client = remember {
-            HttpClient {
-                install(ContentNegotiation) {
-                    json(
-                        Json {
-                            ignoreUnknownKeys = true
-                            isLenient = true
-                        }
-                    )
-                }
+    val client = remember {
+        HttpClient {
+            install(ContentNegotiation) {
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        isLenient = true
+                    }
+                )
             }
         }
-        val viewModel: AppViewModel = viewModel { AppViewModel(client) }
-        val uiState by viewModel.uiState.collectAsState()
+    }
+    val viewModel: AppViewModel = viewModel { AppViewModel(client) }
+    val uiState by viewModel.uiState.collectAsState()
 
+    MaterialTheme {
         Scaffold(
             bottomBar = {
                 Button(
