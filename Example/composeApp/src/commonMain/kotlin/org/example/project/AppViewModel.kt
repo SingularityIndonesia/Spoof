@@ -37,7 +37,7 @@ class AppViewModel : ViewModel() {
                     isLoading = false,
                     errorMessage = null
                 )
-            }.onFailure {
+            }.onFailure { e ->
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = "Error: ${e.message}"
