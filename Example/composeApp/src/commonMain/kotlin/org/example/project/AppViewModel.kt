@@ -16,18 +16,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
-class AppViewModel : ViewModel() {
-
-    private val client = HttpClient {
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    ignoreUnknownKeys = true
-                    isLenient = true
-                }
-            )
-        }
-    }
+class AppViewModel(
+    private val client: HttpClient
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()

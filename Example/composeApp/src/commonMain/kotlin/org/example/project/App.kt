@@ -8,17 +8,35 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
+import io.ktor.client.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        val viewModel: AppViewModel = viewModel()
+        val client = remember {
+            HttpClient {
+                install(ContentNegotiation) {
+                    json(
+                        Json {
+                            ignoreUnknownKeys = true
+                            isLenient = true
+                        }
+                    )
+                }
+            }
+        }
+        val viewModel: AppViewModel = viewModel { AppViewModel(client) }
         val uiState by viewModel.uiState.collectAsState()
 
         Scaffold(
