@@ -15,8 +15,8 @@ group = "io.github.stefanusayudha.spoof"
 version = "1.0.0"
 
 compileJvm()
-compileAndroidLibrary(namespace = "$group.${artifactId.lowercase()}")
-compileIOSLibrary(namespace = "$group.${artifactId.lowercase()}", baseName = artifactId)
+compileAndroidLibrary(namespace = "$group.${"SpoofLib".lowercase()}")
+compileIOSLibrary(namespace = "$group.${"SpoofLib".lowercase()}", baseName = artifactId)
 
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
