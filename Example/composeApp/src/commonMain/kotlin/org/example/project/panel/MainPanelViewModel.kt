@@ -1,12 +1,10 @@
-package org.example.project
+package org.example.project.panel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,14 +12,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
+import org.example.project.model.Post
 
-class AppViewModel(
+class MainPanelViewModel(
     private val client: HttpClient
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AppUiState())
-    val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MainPanelUiState())
+    val uiState: StateFlow<MainPanelUiState> = _uiState.asStateFlow()
 
     private var job: Job? = null
     fun fetchPosts() {
@@ -61,4 +59,3 @@ class AppViewModel(
         client.close()
     }
 }
-

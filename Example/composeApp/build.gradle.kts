@@ -55,10 +55,11 @@ kotlin {
             implementation("io.ktor:ktor-client-core:2.3.12")
             implementation("io.ktor:ktor-client-content-negotiation:2.3.12")
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
+
+            implementation("spoof:lib")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
-            implementation("spoof:lib")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

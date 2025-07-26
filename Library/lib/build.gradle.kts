@@ -3,11 +3,15 @@ import plugin.convention.companion.compileAndroidLibrary
 import plugin.convention.companion.compileIOSLibrary
 import plugin.convention.companion.compileJvm
 import plugin.convention.companion.dependency
+import plugin.convention.companion.withKotlinMultiplatformExtension
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeHotReload)
     id("ConventionUtils")
 }
 
@@ -21,6 +25,19 @@ compileIOSLibrary(namespace = "$group.${artifactId.lowercase()}", baseName = art
 
 dependency {
     common {
+        withKotlinMultiplatformExtension {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+        }
+
+        implementation(libs.androidx.lifecycle.viewmodel)
+        implementation(libs.androidx.lifecycle.runtimeCompose)
+        implementation(libs.androidx.lifecycle.viewmodel.compose)
+
         implementation(project(":core"))
     }
 }
