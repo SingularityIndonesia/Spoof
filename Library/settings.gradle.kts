@@ -1,6 +1,6 @@
 pluginManagement {
     repositories {
-        includeBuild("Plugin")
+        includeBuild("../Plugin")
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -14,6 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Spoof"
-includeBuild("Example")
-includeBuild("Library")
+rootProject.name = "Library"
+include(":core")
+include(":lib")
+include(":lib-no-op")

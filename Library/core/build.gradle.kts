@@ -7,12 +7,41 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
+    alias(libs.plugins.kotlinxSerialization)
     id("ConventionUtils")
 }
 
 val artifactId = "Core"
 group = "io.github.stefanusayudha.spoof"
 version = "1.0.0"
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.kotlinx.serialization)
+        }
+        
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+        
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
+        }
+        
+        androidMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
+        }
+        
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+    }
+}
 
 compileJvm()
 compileAndroidLibrary(namespace = "$group.${artifactId.lowercase()}")
