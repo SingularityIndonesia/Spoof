@@ -47,8 +47,6 @@ fun App() {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
-                Spacer(modifier = Modifier.height(16.dp))
-
                 AnimatedVisibility(uiState.isLoading) {
                     CircularProgressIndicator()
                 }
