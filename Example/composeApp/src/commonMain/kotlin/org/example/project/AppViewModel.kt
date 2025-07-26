@@ -7,6 +7,8 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,10 +30,13 @@ class AppViewModel : ViewModel() {
     }
 
     private val _uiState = MutableStateFlow(AppUiState())
+    private var job: Job? = null
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
 
     fun fetchPosts() {
-        viewModelScope.launch {
+        job?.cancel()
+
+        job = viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true, errorMessage = null)
             }
@@ -40,6 +45,7 @@ class AppViewModel : ViewModel() {
                 client.get("https://jsonplaceholder.typicode.com/posts")
                     .body<List<Post>>()
             }.onSuccess { posts ->
+                ensureActive()
                 _uiState.update {
                     it.copy(
                         posts = posts,
@@ -48,6 +54,7 @@ class AppViewModel : ViewModel() {
                     )
                 }
             }.onFailure { e ->
+                ensureActive()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
