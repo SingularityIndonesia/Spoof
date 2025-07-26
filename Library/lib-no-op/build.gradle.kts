@@ -2,6 +2,7 @@ import com.vanniktech.maven.publish.SonatypeHost
 import plugin.convention.companion.compileAndroidLibrary
 import plugin.convention.companion.compileIOSLibrary
 import plugin.convention.companion.compileJvm
+import plugin.convention.companion.dependency
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -17,6 +18,12 @@ version = "1.0.0"
 compileJvm()
 compileAndroidLibrary(namespace = "$group.${"SpoofLib".lowercase()}")
 compileIOSLibrary(namespace = "$group.${"SpoofLib".lowercase()}", baseName = artifactId)
+
+dependency {
+    common {
+        implementation(project(":core"))
+    }
+}
 
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)

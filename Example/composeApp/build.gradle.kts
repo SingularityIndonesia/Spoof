@@ -58,6 +58,7 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation("spoof:lib")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
