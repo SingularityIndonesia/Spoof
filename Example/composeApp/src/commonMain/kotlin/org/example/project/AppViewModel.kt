@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 class AppViewModel : ViewModel() {
-    
+
     private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json {
@@ -23,13 +23,13 @@ class AppViewModel : ViewModel() {
             })
         }
     }
-    
+
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
-    
+
     fun fetchPosts() {
         viewModelScope.launch {
-            try {
+            runCatching {
                 _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
                 val posts: List<Post> = client.get("https://jsonplaceholder.typicode.com/posts").body()
                 _uiState.value = _uiState.value.copy(
@@ -37,7 +37,7 @@ class AppViewModel : ViewModel() {
                     isLoading = false,
                     errorMessage = null
                 )
-            } catch (e: Exception) {
+            }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = "Error: ${e.message}"
@@ -45,15 +45,10 @@ class AppViewModel : ViewModel() {
             }
         }
     }
-    
+
     override fun onCleared() {
         super.onCleared()
         client.close()
     }
 }
 
-data class AppUiState(
-    val posts: List<Post> = emptyList(),
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
-)
