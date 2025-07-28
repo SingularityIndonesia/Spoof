@@ -1,3 +1,5 @@
+package ui
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -22,10 +24,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toIntRect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import component.Error
-import component.Pending
-import component.Spoof
-import component.Success
+import ui.component.Error
+import ui.component.Pending
+import ui.component.Spoof
+import ui.component.Success
 import data.HttpRequestState
 import data.SnifferDB
 import org.jetbrains.compose.ui.tooling.preview.Preview
