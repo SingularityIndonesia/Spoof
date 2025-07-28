@@ -1,12 +1,12 @@
 package ktor
 
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.HttpClientPlugin
-import io.ktor.client.request.HttpRequestPipeline
-import io.ktor.client.statement.HttpResponsePipeline
-import io.ktor.client.statement.readBytes
-import io.ktor.util.AttributeKey
-import io.ktor.util.KtorDsl
+import data.HttpRequestState
+import data.SnifferDB
+import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.util.*
 
 class SnifferPlugin private constructor() {
 
@@ -15,22 +15,29 @@ class SnifferPlugin private constructor() {
         override val key: AttributeKey<SnifferPlugin> = AttributeKey("SnifferPlugin")
 
         override fun prepare(block: Unit.() -> Unit): SnifferPlugin {
-
             return SnifferPlugin()
         }
 
         override fun install(plugin: SnifferPlugin, scope: HttpClient) {
             // Intercept requests
             scope.requestPipeline.intercept(HttpRequestPipeline.Phases.Before) {
-                // plugin.logRequest(context)
-                // println("${context.toString()}")
+                plugin.httpCall(
+                    HttpRequestState.beginWith(this, it)
+                )
             }
 
             // Intercept responses
             scope.responsePipeline.intercept(HttpResponsePipeline.Phases.After) {
-                println("${context.request.content}")
-                println("${context.response.readBytes().decodeToString()}")
+                plugin.httpCall(
+                    HttpRequestState.finishWith(this, it)
+                )
             }
         }
+    }
+
+    private val db = SnifferDB
+
+    fun httpCall(state: HttpRequestState) {
+        db.httpCall(state)
     }
 }

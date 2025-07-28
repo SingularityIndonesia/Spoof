@@ -1,16 +1,19 @@
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -18,9 +21,14 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toIntRect
-import io.github.stefanusayudha.spoof.lib.generated.resources.Res
-import io.github.stefanusayudha.spoof.lib.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import component.Error
+import component.Pending
+import component.Spoof
+import component.Success
+import data.HttpRequestState
+import data.SnifferDB
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.absoluteValue
 
 @Composable
@@ -36,6 +44,7 @@ fun Sniffer(content: @Composable () -> Unit) {
         }
     ) {
         content.invoke()
+
         SnifferFloatingWidget(
             modifier = Modifier
                 .systemBarsPadding()
@@ -66,27 +75,84 @@ fun Sniffer(content: @Composable () -> Unit) {
                 .onSizeChanged {
                     buttonSize.value = it
                 },
-            onClick = {
-
-            }
         )
     }
 }
 
+@Preview
 @Composable
 fun SnifferFloatingWidget(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit = {}
 ) {
-    FloatingActionButton(
-        modifier = modifier,
-        shape = CircleShape,
-        onClick = onClick
+    val requests by SnifferDB.httpRequest.collectAsStateWithLifecycle()
+    val errorCount by rememberUpdatedState(requests.count { it is HttpRequestState.Error })
+    val successCount by rememberUpdatedState(requests.count { it is HttpRequestState.Success })
+    val spoofCount by rememberUpdatedState(requests.count { it is HttpRequestState.Spoofed })
+    val pendingCount by rememberUpdatedState(requests.count { it is HttpRequestState.Executing })
+
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .clickable {
+                onClick.invoke()
+            }
+            .border(BorderStroke(1f.dp, Color(0xffffffff)), RoundedCornerShape(8.dp))
+            .background(Color(0xff2e2e2e))
+            .padding(horizontal = 4.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Image(
-            modifier = Modifier.size(36.dp),
-            painter = painterResource(Res.drawable.compose_multiplatform),
-            contentDescription = null
-        )
+        AnimatedVisibility(
+            visible = errorCount > 0,
+            enter = slideInHorizontally { it },
+            exit = slideOutHorizontally { it }
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Error()
+                Text(errorCount.toString(), color = Color.White)
+            }
+        }
+        AnimatedVisibility(
+            visible = successCount > 0,
+            enter = slideInHorizontally { it },
+            exit = slideOutHorizontally { it }
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Success()
+                Text(successCount.toString(), color = Color.White)
+            }
+        }
+        AnimatedVisibility(
+            visible = spoofCount > 0,
+            enter = slideInHorizontally { it },
+            exit = slideOutHorizontally { it }
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Spoof()
+                Text(spoofCount.toString(), color = Color.White)
+            }
+        }
+        AnimatedVisibility(
+            visible = pendingCount > 0,
+            enter = slideInHorizontally { it },
+            exit = slideOutHorizontally { it }
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Pending()
+                Text(pendingCount.toString(), color = Color.White)
+            }
+        }
     }
 }
