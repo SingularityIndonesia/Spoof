@@ -29,7 +29,7 @@ sealed class IndicatorState {
 fun CircleStateIndicator(state: IndicatorState, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .size(4.dp)
+            .size(6.dp)
             .clip(CircleShape)
             .background(
                 Color(

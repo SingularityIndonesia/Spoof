@@ -1,6 +1,5 @@
 package org.example.project
 
-import ui.Sniffer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -20,9 +19,7 @@ fun ContextScope(
     val httpClient = remember { defaultHttpClient() }
 
     CompositionLocalProvider(LocalHttpClient provides httpClient) {
-        Sniffer {
-            content.invoke()
-        }
+        content.invoke()
     }
 }
 

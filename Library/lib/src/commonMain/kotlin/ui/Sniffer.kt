@@ -33,20 +33,20 @@ import ui.component.*
 import kotlin.math.absoluteValue
 
 @Composable
-fun Sniffer(content: @Composable () -> Unit) {
+fun SnifferIndicator() {
     val density = LocalDensity.current
     val rootSize = remember { mutableStateOf(IntSize.Zero) }
     val buttonSize = remember { mutableStateOf(IntSize.Zero) }
     val widgetPosition = remember { mutableStateOf(IntOffset((-8 * density.density).toInt(), 0)) }
 
     Box(
-        modifier = Modifier.onSizeChanged {
-            rootSize.value = it
-        }
+        modifier = Modifier
+            .fillMaxSize()
+            .onSizeChanged {
+                rootSize.value = it
+            }
     ) {
-        content.invoke()
-
-        SnifferFloatingWidget(
+        SnifferIndicator(
             modifier = Modifier
                 .systemBarsPadding()
                 .align(Alignment.CenterEnd)
@@ -82,7 +82,7 @@ fun Sniffer(content: @Composable () -> Unit) {
 
 @Preview
 @Composable
-fun SnifferFloatingWidget(
+fun SnifferIndicator(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
@@ -123,8 +123,12 @@ fun SnifferFloatingWidget(
                     onClick.invoke()
             }
             .border(BorderStroke(1f.dp, Color(0xffffffff)), RoundedCornerShape(24.dp))
-            .background(Color(0xff2e2e2e))
-            .padding(horizontal = 8.dp, vertical = 16.dp),
+            .background(
+                Color(0xff2e2e2e).copy(
+                    alpha = if (isMinimized) .3f else .9f
+                )
+            )
+            .padding(horizontal = if (isMinimized) 4.dp else 8.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (isMinimized)
