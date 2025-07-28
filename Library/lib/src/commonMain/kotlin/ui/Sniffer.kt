@@ -144,7 +144,7 @@ fun SnifferIndicator(
             .border(BorderStroke(1f.dp, Color(0xffffffff)), RoundedCornerShape(16.dp))
             .background(
                 Color(0xff2e2e2e).copy(
-                    alpha = if (isMinimized) .3f else .9f
+                    alpha = if (isMinimized) .6f else .9f
                 )
             )
             .padding(horizontal = if (isMinimized) 4.dp else 8.dp, vertical = 16.dp),
