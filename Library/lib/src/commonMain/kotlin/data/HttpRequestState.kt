@@ -29,7 +29,8 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
             "header" to value.header.toString(),
             "request" to value.request.toString(),
             "response" to value.response.toString(),
-            "status" to value.status.toString()
+            "status" to value.status.toString(),
+            "method" to value.method.toString()
         )
         encoder.encodeString(Json.encodeToString(data))
     }
@@ -45,6 +46,7 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     url = data["url"],
                     header = data["header"],
                     request = data["request"],
+                    method = data["method"],
                 )
             }
 
@@ -57,6 +59,7 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     request = data["request"],
                     response = data["response"],
                     status = data["status"]?.toInt(),
+                    method = data["method"],
                 )
             }
 
@@ -69,6 +72,7 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     request = data["request"],
                     response = data["response"],
                     status = data["status"]?.toInt(),
+                    method = data["method"],
                 )
             }
 
@@ -81,6 +85,7 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     request = data["request"],
                     response = data["response"],
                     status = data["status"]?.toInt(),
+                    method = data["method"],
                 )
             }
 
@@ -97,7 +102,8 @@ sealed class HttpRequestState(
     open val header: String? = null,
     open val request: String? = null,
     open val response: String? = null,
-    open val status: Int? = null
+    open val status: Int? = null,
+    open val method: String? = null
 ) {
 
     data class Executing(
@@ -106,6 +112,7 @@ sealed class HttpRequestState(
         override val url: String?,
         override val header: String?,
         override val request: String?,
+        override val method: String?,
     ) : HttpRequestState(id, timeSignMillis, url, header, request)
 
     data class Success(
@@ -115,7 +122,8 @@ sealed class HttpRequestState(
         override val header: String?,
         override val request: String?,
         override val response: String?,
-        override val status: Int?
+        override val status: Int?,
+        override val method: String?,
     ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
 
     data class Error(
@@ -125,7 +133,8 @@ sealed class HttpRequestState(
         override val header: String?,
         override val request: String?,
         override val response: String?,
-        override val status: Int?
+        override val status: Int?,
+        override val method: String?,
     ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
 
     data class Spoofed(
@@ -135,7 +144,8 @@ sealed class HttpRequestState(
         override val header: String?,
         override val request: String?,
         override val response: String?,
-        override val status: Int?
+        override val status: Int?,
+        override val method: String?,
     ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
 
     companion object {
@@ -155,6 +165,7 @@ sealed class HttpRequestState(
                 url = pipeline.context.url.buildString(),
                 header = pipeline.context.headers.build().toString(),
                 request = pipeline.context.body.toString(),
+                method = pipeline.context.method.value,
             )
         }
 
@@ -170,7 +181,8 @@ sealed class HttpRequestState(
                 header = pipeline.context.request.headers.toString(),
                 request = pipeline.context.request.content.toString(),
                 response = data.response.toString(),
-                status = pipeline.context.response.status.value
+                status = pipeline.context.response.status.value,
+                method = pipeline.context.request.method.value,
             )
         }
     }

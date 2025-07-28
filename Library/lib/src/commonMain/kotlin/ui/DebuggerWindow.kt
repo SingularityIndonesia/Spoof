@@ -86,13 +86,15 @@ data class ErrorItemDisplay(
     val executionTime: String,
     val status: String,
     val url: String,
+    val method: String,
 ) {
     companion object {
         fun from(data: HttpRequestState.Error): ErrorItemDisplay {
             return ErrorItemDisplay(
                 status = data.status?.toString().orEmpty(),
                 url = data.url.orEmpty(),
-                executionTime = data.timeSignMillis.toDate()
+                executionTime = data.timeSignMillis.toDate(),
+                method = data.method.toString()
             )
         }
     }
@@ -104,7 +106,7 @@ fun ErrorItem(
     item: ErrorItemDisplay
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorSuccess)) {
-        StatusItem(modifier, item.executionTime, item.status, item.url)
+        StatusItem(modifier, item.executionTime, item.status, item.url, item.method)
     }
 }
 
@@ -112,13 +114,15 @@ data class ExecutingItemDisplay(
     val executionTime: String,
     val status: String,
     val url: String,
+    val method: String,
 ) {
     companion object {
         fun from(data: HttpRequestState.Executing): ExecutingItemDisplay {
             return ExecutingItemDisplay(
                 status = "Executing..",
                 url = data.url.orEmpty(),
-                executionTime = data.timeSignMillis.toDate()
+                executionTime = data.timeSignMillis.toDate(),
+                method = data.method.toString()
             )
         }
     }
@@ -130,7 +134,7 @@ fun ExecutingItem(
     item: ExecutingItemDisplay
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorSuccess)) {
-        StatusItem(modifier, item.executionTime, item.status, item.url)
+        StatusItem(modifier, item.executionTime, item.status, item.url, item.method)
     }
 }
 
@@ -138,13 +142,15 @@ data class SpoofedItemDisplay(
     val executionTime: String,
     val status: String,
     val url: String,
+    val method: String,
 ) {
     companion object {
         fun from(data: HttpRequestState.Spoofed): SpoofedItemDisplay {
             return SpoofedItemDisplay(
                 status = "Spoofed",
                 url = data.url.orEmpty(),
-                executionTime = data.timeSignMillis.toDate()
+                executionTime = data.timeSignMillis.toDate(),
+                method = data.method.toString()
             )
         }
     }
@@ -156,7 +162,7 @@ fun SpoofedItem(
     item: SpoofedItemDisplay
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorSuccess)) {
-        StatusItem(modifier, item.executionTime, item.status, item.url)
+        StatusItem(modifier, item.executionTime, item.status, item.url, item.method)
     }
 }
 
@@ -164,13 +170,15 @@ data class SuccessItemDisplay(
     val executionTime: String,
     val status: String,
     val url: String,
+    val method: String,
 ) {
     companion object {
         fun from(data: HttpRequestState.Success): SuccessItemDisplay {
             return SuccessItemDisplay(
                 status = data.status?.toString().orEmpty(),
                 url = data.url.orEmpty(),
-                executionTime = data.timeSignMillis.toDate()
+                executionTime = data.timeSignMillis.toDate(),
+                method = data.method.toString()
             )
         }
     }
@@ -182,7 +190,7 @@ fun SuccessItem(
     item: SuccessItemDisplay
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorSuccess)) {
-        StatusItem(modifier, item.executionTime, item.status, item.url)
+        StatusItem(modifier, item.executionTime, item.status, item.url, item.method)
     }
 }
 
@@ -192,15 +200,20 @@ fun StatusItem(
     executionTime: String,
     status: String,
     url: String,
+    method: String,
 ) {
     Column(
         modifier = modifier
             .padding(vertical = 16.dp),
     ) {
-        Text(
-            text = url,
-            overflow = TextOverflow.StartEllipsis
-        )
+        Row {
+            Text(text = method.uppercase(), color = Color.White)
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = url,
+                overflow = TextOverflow.StartEllipsis
+            )
+        }
         Row {
             Text(text = executionTime, color = Color.White)
             Spacer(modifier = Modifier.width(8.dp))
@@ -216,7 +229,6 @@ fun Long.toDate(timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
     val instant = Instant.fromEpochMilliseconds(this)
     val dateTime: LocalDateTime = instant.toLocalDateTime(timeZone = timeZone)
 
-    val year = dateTime.year
     val month = dateTime.monthNumber.toString().padStart(2, '0')
     val day = dateTime.dayOfMonth.toString().padStart(2, '0')
     val hour = dateTime.hour.toString().padStart(2, '0')
