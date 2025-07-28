@@ -1,14 +1,15 @@
 package data
 
-import io.ktor.client.call.HttpClientCall
-import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.statement.HttpResponseContainer
-import io.ktor.util.AttributeKey
-import io.ktor.util.date.getTimeMillis
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.util.*
+import io.ktor.util.date.*
+import io.ktor.util.pipeline.*
 
 sealed class HttpRequestState {
     abstract val id: String
+    val timeSignMillis: Long = getTimeMillis()
     open val url: String? = null
     open val header: String? = null
     open val request: String? = null
