@@ -5,7 +5,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import util.ktor.SnifferPlugin
+import util.ktor.SnifferPluginKtor
 
 val LocalHttpClient = staticCompositionLocalOf { defaultHttpClient() }
 
@@ -20,6 +20,6 @@ fun defaultHttpClient(): HttpClient {
             )
         }
 
-        install(SnifferPlugin)
+        install(SnifferPluginKtor)
     }
 }

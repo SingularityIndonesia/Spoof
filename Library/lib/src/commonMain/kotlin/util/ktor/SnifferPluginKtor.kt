@@ -8,17 +8,17 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.util.*
 
-class SnifferPlugin private constructor() {
+class SnifferPluginKtor private constructor() {
 
     @KtorDsl
-    companion object Plugin : HttpClientPlugin<Unit, SnifferPlugin> {
-        override val key: AttributeKey<SnifferPlugin> = AttributeKey("SnifferPlugin")
+    companion object Plugin : HttpClientPlugin<Unit, SnifferPluginKtor> {
+        override val key: AttributeKey<SnifferPluginKtor> = AttributeKey("SnifferPlugin")
 
-        override fun prepare(block: Unit.() -> Unit): SnifferPlugin {
-            return SnifferPlugin()
+        override fun prepare(block: Unit.() -> Unit): SnifferPluginKtor {
+            return SnifferPluginKtor()
         }
 
-        override fun install(plugin: SnifferPlugin, scope: HttpClient) {
+        override fun install(plugin: SnifferPluginKtor, scope: HttpClient) {
             // Intercept requests
             scope.requestPipeline.intercept(HttpRequestPipeline.Phases.Before) {
                 plugin.httpCall(
