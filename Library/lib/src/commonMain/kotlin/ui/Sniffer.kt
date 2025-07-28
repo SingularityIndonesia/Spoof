@@ -92,7 +92,7 @@ fun SnifferIndicator() {
                 },
             isDragging = isDragging,
             onClick = {
-                openDebuggerWindow()
+                openDebugger()
             }
         )
     }

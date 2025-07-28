@@ -16,7 +16,7 @@ class DebuggerActivity : ComponentActivity() {
         Sniffer.initiate(this)
 
         setContent {
-            DebuggerWindow()
+            DebuggerScreen()
         }
     }
 }

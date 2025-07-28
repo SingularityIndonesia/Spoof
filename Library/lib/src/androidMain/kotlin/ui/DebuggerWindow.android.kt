@@ -2,7 +2,7 @@ package ui
 
 import data.Sniffer
 
-actual fun openDebuggerWindow() {
+actual fun openDebugger() {
     Sniffer.launchDebuggerActivity.invoke()
 }
 
