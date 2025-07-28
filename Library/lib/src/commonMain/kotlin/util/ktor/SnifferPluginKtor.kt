@@ -37,7 +37,7 @@ class SnifferPluginKtor private constructor() {
 
     private val db = SnifferDB
 
-    fun httpCall(state: HttpRequestState) {
+    suspend fun httpCall(state: HttpRequestState) {
         db.httpCall(state)
     }
 }

@@ -6,46 +6,129 @@ import io.ktor.client.statement.*
 import io.ktor.util.*
 import io.ktor.util.date.*
 import io.ktor.util.pipeline.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.json.Json
 
-sealed class HttpRequestState {
-    abstract val id: String
-    val timeSignMillis: Long = getTimeMillis()
-    open val url: String? = null
-    open val header: String? = null
-    open val request: String? = null
+object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
+
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("InstantAsString", PrimitiveKind.STRING)
+
+    @Throws(IllegalStateException::class)
+    override fun serialize(encoder: kotlinx.serialization.encoding.Encoder, value: HttpRequestState) {
+        val typeToken = value::class.simpleName ?: throw IllegalStateException("Class didn't have name")
+        val data = mapOf(
+            "typeToken" to typeToken,
+            "id" to value.id.toString(),
+            "timeSignMillis" to value.timeSignMillis.toString(),
+            "url" to value.url.toString(),
+            "header" to value.header.toString(),
+            "request" to value.request.toString(),
+            "response" to value.response.toString(),
+        )
+        encoder.encodeString(Json.encodeToString(data))
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun deserialize(decoder: Decoder): HttpRequestState {
+        val data = Json.decodeFromString<Map<String, String>>(decoder.decodeString())
+        return when (data["typeToken"]) {
+            HttpRequestState.Executing::class.simpleName -> {
+                HttpRequestState.Executing(
+                    id = data["id"] ?: throw IllegalStateException("Data corrupted"),
+                    timeSignMillis = data["timeSignMillis"]?.toLong() ?: throw IllegalStateException("Data corrupted"),
+                    url = data["url"],
+                    header = data["header"],
+                    request = data["request"],
+                )
+            }
+
+            HttpRequestState.Success::class.simpleName -> {
+                HttpRequestState.Success(
+                    id = data["id"] ?: throw IllegalStateException("Data corrupted"),
+                    timeSignMillis = data["timeSignMillis"]?.toLong() ?: throw IllegalStateException("Data corrupted"),
+                    url = data["url"],
+                    header = data["header"],
+                    request = data["request"],
+                    response = data["response"]
+                )
+            }
+
+            HttpRequestState.Error::class.simpleName -> {
+                HttpRequestState.Error(
+                    id = data["id"] ?: throw IllegalStateException("Data corrupted"),
+                    timeSignMillis = data["timeSignMillis"]?.toLong() ?: throw IllegalStateException("Data corrupted"),
+                    url = data["url"],
+                    header = data["header"],
+                    request = data["request"],
+                    response = data["response"]
+                )
+            }
+
+            HttpRequestState.Spoofed::class.simpleName -> {
+                HttpRequestState.Spoofed(
+                    id = data["id"] ?: throw IllegalStateException("Data corrupted"),
+                    timeSignMillis = data["timeSignMillis"]?.toLong() ?: throw IllegalStateException("Data corrupted"),
+                    url = data["url"],
+                    header = data["header"],
+                    request = data["request"],
+                    response = data["response"]
+                )
+            }
+
+            else -> throw IllegalStateException("No type token found")
+        }
+    }
+}
+
+@Serializable(HttpRequestStateSerializer::class)
+sealed class HttpRequestState(
+    open val id: String,
+    open val timeSignMillis: Long,
+    open val url: String? = null,
+    open val header: String? = null,
+    open val request: String? = null,
     open val response: String? = null
+) {
 
     data class Executing(
         override val id: String,
+        override val timeSignMillis: Long = getTimeMillis(),
         override val url: String?,
         override val header: String?,
         override val request: String?,
-    ) : HttpRequestState()
+    ) : HttpRequestState(id, timeSignMillis, url, header, request)
 
     data class Success(
         override val id: String,
+        override val timeSignMillis: Long = getTimeMillis(),
         override val url: String?,
         override val header: String?,
         override val request: String?,
         override val response: String?
-    ) : HttpRequestState()
+    ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
 
     data class Error(
         override val id: String,
+        override val timeSignMillis: Long = getTimeMillis(),
         override val url: String?,
         override val header: String?,
         override val request: String?,
         override val response: String?
-    ) : HttpRequestState()
-
+    ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
 
     data class Spoofed(
         override val id: String,
+        override val timeSignMillis: Long = getTimeMillis(),
         override val url: String?,
         override val header: String?,
         override val request: String?,
         override val response: String?
-    ) : HttpRequestState()
+    ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
 
     companion object {
         fun beginWith(pipeline: PipelineContext<Any, HttpRequestBuilder>, data: Any): HttpRequestState {

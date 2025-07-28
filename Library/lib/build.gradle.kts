@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlinxSerialization)
     id("ConventionUtils")
 }
 
@@ -41,6 +42,11 @@ dependency {
         implementation(libs.ktor.client.core)
         implementation(libs.ktor.client.content.negotiation)
         implementation(libs.ktor.serialization.kotlinx.json)
+
+        // DataStore library
+        implementation("androidx.datastore:datastore:1.1.7")
+        // The Preferences DataStore library
+        implementation("androidx.datastore:datastore-preferences:1.1.7")
 
         implementation(project(":core"))
     }
