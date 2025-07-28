@@ -38,6 +38,7 @@ fun SnifferIndicator() {
     val rootSize = remember { mutableStateOf(IntSize.Zero) }
     val buttonSize = remember { mutableStateOf(IntSize.Zero) }
     val widgetPosition = remember { mutableStateOf(IntOffset((-8 * density.density).toInt(), 0)) }
+    val isDragging = remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -53,7 +54,14 @@ fun SnifferIndicator() {
                 .offset { widgetPosition.value }
                 .pointerInput(Unit) {
                     detectDragGestures(
+                        onDrag = { change, dragAmount ->
+                            isDragging.value = true
+                            val finalPos =
+                                widgetPosition.value + IntOffset(x = dragAmount.x.toInt(), y = dragAmount.y.toInt())
+                            widgetPosition.value = finalPos
+                        },
                         onDragEnd = {
+                            isDragging.value = false
                             val rootRect = rootSize.value.toIntRect()
 
                             if (widgetPosition.value.x.absoluteValue < rootRect.center.x - buttonSize.value.width / 2) {
@@ -66,16 +74,23 @@ fun SnifferIndicator() {
                                     .copy(x = -1 * rootSize.value.width + buttonSize.value.width + (8 * this.density).toInt())
                             }
                         },
-                        onDrag = { change, dragAmount ->
-                            val finalPos =
-                                widgetPosition.value + IntOffset(x = dragAmount.x.toInt(), y = dragAmount.y.toInt())
-                            widgetPosition.value = finalPos
-                        }
                     )
                 }
                 .onSizeChanged {
                     buttonSize.value = it
+
+                    val rootRect = rootSize.value.toIntRect()
+                    if (widgetPosition.value.x.absoluteValue < rootRect.center.x - buttonSize.value.width / 2) {
+                        // snap right
+                        widgetPosition.value = widgetPosition.value
+                            .copy(x = (-8 * density.density).toInt())
+                    } else {
+                        // snap left
+                        widgetPosition.value = widgetPosition.value
+                            .copy(x = -1 * rootSize.value.width + buttonSize.value.width + (8 * density.density).toInt())
+                    }
                 },
+            isDragging = isDragging
         )
     }
 }
@@ -84,6 +99,7 @@ fun SnifferIndicator() {
 @Composable
 fun SnifferIndicator(
     modifier: Modifier = Modifier,
+    isDragging: State<Boolean> = mutableStateOf(false),
     onClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
@@ -100,6 +116,9 @@ fun SnifferIndicator(
         maximizeJob.value = scope.launch {
             isMinimized = false
             delay(3000)
+            while (isDragging.value) {
+                delay(2000)
+            }
             ensureActive()
             isMinimized = true
         }
@@ -115,14 +134,14 @@ fun SnifferIndicator(
 
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(16.dp))
             .clickable {
                 if (isMinimized)
                     temporaryMaximize.invoke()
                 else
                     onClick.invoke()
             }
-            .border(BorderStroke(1f.dp, Color(0xffffffff)), RoundedCornerShape(24.dp))
+            .border(BorderStroke(1f.dp, Color(0xffffffff)), RoundedCornerShape(16.dp))
             .background(
                 Color(0xff2e2e2e).copy(
                     alpha = if (isMinimized) .3f else .9f
