@@ -90,7 +90,10 @@ fun SnifferIndicator() {
                             .copy(x = -1 * rootSize.value.width + buttonSize.value.width + (8 * density.density).toInt())
                     }
                 },
-            isDragging = isDragging
+            isDragging = isDragging,
+            onClick = {
+                openDebuggerWindow()
+            }
         )
     }
 }
@@ -103,7 +106,7 @@ fun SnifferIndicator(
     onClick: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
-    val requests by SnifferDB.httpRequest.collectAsStateWithLifecycle(emptyList())
+    val requests by SnifferDB.httpRequests.collectAsStateWithLifecycle(emptyList())
     val errorCount by rememberUpdatedState(requests.count { it is HttpRequestState.Error })
     val successCount by rememberUpdatedState(requests.count { it is HttpRequestState.Success })
     val spoofCount by rememberUpdatedState(requests.count { it is HttpRequestState.Spoofed })

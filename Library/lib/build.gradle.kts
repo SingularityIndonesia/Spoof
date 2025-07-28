@@ -44,14 +44,17 @@ dependency {
         implementation(libs.ktor.serialization.kotlinx.json)
 
         // DataStore library
-        implementation("androidx.datastore:datastore:1.1.7")
-        // The Preferences DataStore library
-        implementation("androidx.datastore:datastore-preferences:1.1.7")
+        implementation(libs.datastore)
+        implementation(libs.datastore.preferences)
+
+        // Date Time
+        implementation(libs.kotlinx.datetime)
 
         implementation(project(":core"))
     }
 
     android {
+        implementation(libs.androidx.activity.compose)
         implementation(libs.ktor.client.okhttp)
     }
 

@@ -11,9 +11,12 @@ import kotlinx.serialization.json.Json
 import okio.Path.Companion.toPath
 
 actual object SnifferDB {
-    private lateinit var datastore: DataStore<Preferences>
+    private var datastore: DataStore<Preferences>? = null
 
     internal fun initiate(context: Context) {
+        // already initiated
+        if (datastore != null) return
+
         val path = context.filesDir.resolve("singularity_sniffer_datastore.preferences_pb").absolutePath.toPath()
         datastore = PreferenceDataStoreFactory.createWithPath(
             produceFile = { path }
@@ -21,31 +24,33 @@ actual object SnifferDB {
     }
 
     actual val httpRequestRecord: Flow<List<HttpRequestState>>
-        get() = datastore.data
-            .map {
+        get() = datastore?.data
+            ?.map {
                 it[stringSetPreferencesKey("HTTP_REQUEST_STATES")]
                     ?.let { set ->
                         set.map { e -> Json.decodeFromString(e) }
                     }
                     ?: emptyList()
             }
+            ?: error(IllegalStateException("SnifferDB is Not propertly initiated"))
 
-    actual val httpRequest: Flow<List<HttpRequestState>>
+    actual val httpRequests: Flow<List<HttpRequestState>>
         get() = httpRequestRecord.map { reqs ->
             reqs.groupBy { it.id }
                 .map {
                     it.value.maxBy { it.timeSignMillis }
                 }
+                .sortedByDescending { it.timeSignMillis }
         }
 
     actual suspend fun httpCall(httpRequestState: HttpRequestState) {
-        datastore.updateData {
+        datastore?.updateData {
             with(it.toMutablePreferences()) {
                 val previousSet = it[stringSetPreferencesKey("HTTP_REQUEST_STATES")] ?: emptySet()
                 val newSet = previousSet + Json.encodeToString(httpRequestState)
                 set(stringSetPreferencesKey("HTTP_REQUEST_STATES"), newSet)
                 this
             }
-        }
+        } ?: error(IllegalStateException("SnifferDB is Not propertly initiated"))
     }
 }

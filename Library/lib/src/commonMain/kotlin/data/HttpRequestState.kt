@@ -29,6 +29,7 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
             "header" to value.header.toString(),
             "request" to value.request.toString(),
             "response" to value.response.toString(),
+            "status" to value.status.toString()
         )
         encoder.encodeString(Json.encodeToString(data))
     }
@@ -54,7 +55,8 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     url = data["url"],
                     header = data["header"],
                     request = data["request"],
-                    response = data["response"]
+                    response = data["response"],
+                    status = data["status"]?.toInt(),
                 )
             }
 
@@ -65,7 +67,8 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     url = data["url"],
                     header = data["header"],
                     request = data["request"],
-                    response = data["response"]
+                    response = data["response"],
+                    status = data["status"]?.toInt(),
                 )
             }
 
@@ -76,7 +79,8 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     url = data["url"],
                     header = data["header"],
                     request = data["request"],
-                    response = data["response"]
+                    response = data["response"],
+                    status = data["status"]?.toInt(),
                 )
             }
 
@@ -92,7 +96,8 @@ sealed class HttpRequestState(
     open val url: String? = null,
     open val header: String? = null,
     open val request: String? = null,
-    open val response: String? = null
+    open val response: String? = null,
+    open val status: Int? = null
 ) {
 
     data class Executing(
@@ -109,7 +114,8 @@ sealed class HttpRequestState(
         override val url: String?,
         override val header: String?,
         override val request: String?,
-        override val response: String?
+        override val response: String?,
+        override val status: Int?
     ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
 
     data class Error(
@@ -118,7 +124,8 @@ sealed class HttpRequestState(
         override val url: String?,
         override val header: String?,
         override val request: String?,
-        override val response: String?
+        override val response: String?,
+        override val status: Int?
     ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
 
     data class Spoofed(
@@ -127,7 +134,8 @@ sealed class HttpRequestState(
         override val url: String?,
         override val header: String?,
         override val request: String?,
-        override val response: String?
+        override val response: String?,
+        override val status: Int?
     ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
 
     companion object {
@@ -162,6 +170,7 @@ sealed class HttpRequestState(
                 header = pipeline.context.request.headers.toString(),
                 request = pipeline.context.request.content.toString(),
                 response = data.response.toString(),
+                status = pipeline.context.response.status.value
             )
         }
     }
