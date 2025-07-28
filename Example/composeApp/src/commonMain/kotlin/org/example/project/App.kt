@@ -8,9 +8,6 @@ import ui.SnifferIndicator
 @Composable
 @Preview
 fun App() {
-    ContextScope {
-        MainPanel()
-    }
-
+    MainPanel()
     SnifferIndicator()
 }
