@@ -37,7 +37,7 @@ fun ErrorItem(
     item: ErrorItemDisplay,
     onClick: () -> Unit,
 ) {
-    CompositionLocalProvider(LocalContentColor provides Color(colorSuccess)) {
+    CompositionLocalProvider(LocalContentColor provides Color(colorError)) {
         StatusItem(modifier, onClick, item.executionTime, item.status, item.url, item.method)
     }
 }
@@ -66,7 +66,7 @@ fun ExecutingItem(
     item: ExecutingItemDisplay,
     onClick: () -> Unit,
 ) {
-    CompositionLocalProvider(LocalContentColor provides Color(colorSuccess)) {
+    CompositionLocalProvider(LocalContentColor provides Color.White) {
         StatusItem(modifier, onClick, item.executionTime, item.status, item.url, item.method)
     }
 }
@@ -95,7 +95,7 @@ fun SpoofedItem(
     item: SpoofedItemDisplay,
     onClick: () -> Unit,
 ) {
-    CompositionLocalProvider(LocalContentColor provides Color(colorSuccess)) {
+    CompositionLocalProvider(LocalContentColor provides Color(colorSpoofed)) {
         StatusItem(modifier, onClick, item.executionTime, item.status, item.url, item.method)
     }
 }
@@ -154,11 +154,10 @@ fun StatusItem(
             )
         }
         Row {
-            Text(text = executionTime, color = Color.White)
-            Spacer(modifier = Modifier.width(8.dp))
             Text(text = "Status:", color = Color.White)
             Spacer(modifier = Modifier.width(4.dp))
             Text(status)
         }
+        Text(text = executionTime, color = Color.White)
     }
 }

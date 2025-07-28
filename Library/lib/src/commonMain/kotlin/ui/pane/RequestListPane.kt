@@ -1,4 +1,4 @@
-package ui
+package ui.pane
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn

@@ -38,6 +38,9 @@ dependency {
         implementation(libs.androidx.lifecycle.viewmodel)
         implementation(libs.androidx.lifecycle.runtimeCompose)
         implementation(libs.androidx.lifecycle.viewmodel.compose)
+        
+        // Navigation Compose
+        implementation(libs.androidx.navigation.compose)
 
         implementation(libs.ktor.client.core)
         implementation(libs.ktor.client.content.negotiation)
