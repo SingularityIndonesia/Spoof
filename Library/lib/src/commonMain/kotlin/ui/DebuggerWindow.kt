@@ -201,11 +201,12 @@ fun StatusItem(
             text = url,
             overflow = TextOverflow.StartEllipsis
         )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Row {
             Text(text = executionTime, color = Color.White)
-            Text("status: $status")
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "Status:", color = Color.White)
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(status)
         }
     }
 }

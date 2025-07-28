@@ -20,7 +20,6 @@ object Sniffer {
                 DebuggerActivity::class.java
             ).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
             }
 
             context.startActivity(intent)
