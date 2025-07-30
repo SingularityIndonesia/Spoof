@@ -213,16 +213,29 @@ sealed class HttpRequestState(
                 val serializer = Json.serializersModule.serializer(type)
                 json.encodeToString(serializer, data.response)
             }
-            return Success(
-                id = requestId.toString(),
-                url = pipeline.context.request.url.toString(),
-                requestHeader = requestHeader,
-                requestBody = requestBody,
-                responseHeader = responseHeader,
-                responseBody = response,
-                status = pipeline.context.response.status.value,
-                method = pipeline.context.request.method.value,
-            )
+            val isSuccess = pipeline.context.response.status.value in (200..299)
+            return if (isSuccess)
+                Success(
+                    id = requestId.toString(),
+                    url = pipeline.context.request.url.toString(),
+                    requestHeader = requestHeader,
+                    requestBody = requestBody,
+                    responseHeader = responseHeader,
+                    responseBody = response,
+                    status = pipeline.context.response.status.value,
+                    method = pipeline.context.request.method.value,
+                )
+            else
+                Error(
+                    id = requestId.toString(),
+                    url = pipeline.context.request.url.toString(),
+                    requestHeader = requestHeader,
+                    requestBody = requestBody,
+                    responseHeader = responseHeader,
+                    responseBody = response,
+                    status = pipeline.context.response.status.value,
+                    method = pipeline.context.request.method.value,
+                )
         }
     }
 }
