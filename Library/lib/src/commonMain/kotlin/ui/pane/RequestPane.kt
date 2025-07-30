@@ -12,6 +12,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import data.HttpRequestState
 import data.SnifferDB
+import io.github.stefanusayudha.spoof.lib.generated.resources.Res
+import io.github.stefanusayudha.spoof.lib.generated.resources.ic_delete_24
+import io.github.stefanusayudha.spoof.lib.generated.resources.ic_share_24
+import org.jetbrains.compose.resources.painterResource
 import ui.component.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,6 +69,41 @@ fun RequestPane(
 
                         }
                     }
+                }
+            }
+        },
+        bottomBar = {
+            BottomAppBar(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+            ) {
+                Button(
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError,
+                    ),
+                    onClick = {
+
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(Res.drawable.ic_delete_24),
+                        contentDescription = null
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                OutlinedButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(Res.drawable.ic_share_24),
+                        contentDescription = null
+                    )
                 }
             }
         }
