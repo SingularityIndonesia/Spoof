@@ -26,7 +26,7 @@ fun RequestPane(
 
     Scaffold(
         topBar = {
-            Box(
+            Row(
                 modifier = Modifier.statusBarsPadding()
             ) {
                 when (val tr = transaction) {
