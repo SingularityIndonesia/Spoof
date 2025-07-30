@@ -21,23 +21,10 @@ fun DebuggerScreen() {
     MaterialTheme(
         colorScheme = darkColorScheme()
     ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text("Sniffer")
-                    }
-                )
-            }
-        ) {
-            Surface {
-                MainNavigation(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                )
-            }
-        }
+        MainNavigation(
+            modifier = Modifier
+                .fillMaxSize()
+        )
     }
 }
 
@@ -54,7 +41,6 @@ fun MainNavigation(
     ) {
         composable(route = "list") {
             RequestListPane(
-                modifier = Modifier.fillMaxSize(),
                 onClick = {
                     controller.navigate("request/$it")
                 },
@@ -69,7 +55,6 @@ fun MainNavigation(
         ) {
             val id = it.savedStateHandle.get<String>("id") ?: return@composable
             RequestPane(
-                modifier = Modifier.fillMaxSize(),
                 id = id
             )
         }
