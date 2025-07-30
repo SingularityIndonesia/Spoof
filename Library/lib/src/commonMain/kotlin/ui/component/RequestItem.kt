@@ -3,6 +3,7 @@ package ui.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -163,6 +164,10 @@ fun StatusItem(
             Spacer(modifier = Modifier.width(4.dp))
             Text(status)
         }
-        Text(text = executionTime, color = Color.White)
+        Text(
+            text = executionTime,
+            color = Color.White,
+            style = MaterialTheme.typography.labelSmall
+        )
     }
 }

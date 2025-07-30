@@ -133,7 +133,7 @@ fun RequestPane(
                     text = transaction.responseBody.orEmpty(),
                     style = MaterialTheme.typography.bodySmall
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
