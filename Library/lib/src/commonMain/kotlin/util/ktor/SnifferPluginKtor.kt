@@ -19,6 +19,13 @@ class SnifferPluginKtor private constructor() {
         }
 
         override fun install(plugin: SnifferPluginKtor, scope: HttpClient) {
+            scope.requestPipeline.intercept(HttpRequestPipeline.Phases.Transform) {
+
+                context.executionContext.invokeOnCompletion {
+                    println("$subject")
+                }
+            }
+
             // Intercept requests
             scope.requestPipeline.intercept(HttpRequestPipeline.Phases.Before) {
                 plugin.httpCall(

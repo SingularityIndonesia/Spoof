@@ -13,6 +13,7 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 
 object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
 
@@ -26,9 +27,10 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
             "id" to value.id.toString(),
             "timeSignMillis" to value.timeSignMillis.toString(),
             "url" to value.url.toString(),
-            "header" to value.header.toString(),
-            "request" to value.request.toString(),
-            "response" to value.response.toString(),
+            "requestHeader" to value.requestHeader.toString(),
+            "requestBody" to value.requestBody.toString(),
+            "responseHeader" to value.responseHeader.toString(),
+            "responseBody" to value.responseBody.toString(),
             "status" to value.status.toString(),
             "method" to value.method.toString()
         )
@@ -44,8 +46,8 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     id = data["id"] ?: throw IllegalStateException("Data corrupted"),
                     timeSignMillis = data["timeSignMillis"]?.toLong() ?: throw IllegalStateException("Data corrupted"),
                     url = data["url"],
-                    header = data["header"],
-                    request = data["request"],
+                    responseHeader = data["responseHeader"],
+                    requestBody = data["requestBody"],
                     method = data["method"],
                 )
             }
@@ -55,9 +57,10 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     id = data["id"] ?: throw IllegalStateException("Data corrupted"),
                     timeSignMillis = data["timeSignMillis"]?.toLong() ?: throw IllegalStateException("Data corrupted"),
                     url = data["url"],
-                    header = data["header"],
-                    request = data["request"],
-                    response = data["response"],
+                    requestHeader = data["requestHeader"],
+                    requestBody = data["requestBody"],
+                    responseHeader = data["responseHeader"],
+                    responseBody = data["responseBody"],
                     status = data["status"]?.toInt(),
                     method = data["method"],
                 )
@@ -68,9 +71,10 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     id = data["id"] ?: throw IllegalStateException("Data corrupted"),
                     timeSignMillis = data["timeSignMillis"]?.toLong() ?: throw IllegalStateException("Data corrupted"),
                     url = data["url"],
-                    header = data["header"],
-                    request = data["request"],
-                    response = data["response"],
+                    requestHeader = data["requestHeader"],
+                    requestBody = data["requestBody"],
+                    responseHeader = data["responseHeader"],
+                    responseBody = data["responseBody"],
                     status = data["status"]?.toInt(),
                     method = data["method"],
                 )
@@ -81,9 +85,10 @@ object HttpRequestStateSerializer : KSerializer<HttpRequestState> {
                     id = data["id"] ?: throw IllegalStateException("Data corrupted"),
                     timeSignMillis = data["timeSignMillis"]?.toLong() ?: throw IllegalStateException("Data corrupted"),
                     url = data["url"],
-                    header = data["header"],
-                    request = data["request"],
-                    response = data["response"],
+                    requestHeader = data["requestHeader"],
+                    requestBody = data["requestBody"],
+                    responseHeader = data["responseHeader"],
+                    responseBody = data["responseBody"],
                     status = data["status"]?.toInt(),
                     method = data["method"],
                 )
@@ -99,9 +104,10 @@ sealed class HttpRequestState(
     open val id: String,
     open val timeSignMillis: Long,
     open val url: String? = null,
-    open val header: String? = null,
-    open val request: String? = null,
-    open val response: String? = null,
+    open val requestHeader: String? = null,
+    open val requestBody: String? = null,
+    open val responseHeader: String? = null,
+    open val responseBody: String? = null,
     open val status: Int? = null,
     open val method: String? = null
 ) {
@@ -110,45 +116,52 @@ sealed class HttpRequestState(
         override val id: String,
         override val timeSignMillis: Long = getTimeMillis(),
         override val url: String?,
-        override val header: String?,
-        override val request: String?,
+        override val responseHeader: String?,
+        override val requestBody: String?,
         override val method: String?,
-    ) : HttpRequestState(id, timeSignMillis, url, header, request)
+    ) : HttpRequestState(id, timeSignMillis, url, responseHeader, requestBody)
 
     data class Success(
         override val id: String,
         override val timeSignMillis: Long = getTimeMillis(),
         override val url: String?,
-        override val header: String?,
-        override val request: String?,
-        override val response: String?,
+        override val requestHeader: String? = null,
+        override val requestBody: String?,
+        override val responseHeader: String?,
+        override val responseBody: String?,
         override val status: Int?,
         override val method: String?,
-    ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
+    ) : HttpRequestState(id, timeSignMillis, url, responseHeader, requestBody, responseBody)
 
     data class Error(
         override val id: String,
         override val timeSignMillis: Long = getTimeMillis(),
         override val url: String?,
-        override val header: String?,
-        override val request: String?,
-        override val response: String?,
+        override val requestHeader: String? = null,
+        override val requestBody: String?,
+        override val responseHeader: String?,
+        override val responseBody: String?,
         override val status: Int?,
         override val method: String?,
-    ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
+    ) : HttpRequestState(id, timeSignMillis, url, responseHeader, requestBody, responseBody)
 
     data class Spoofed(
         override val id: String,
         override val timeSignMillis: Long = getTimeMillis(),
         override val url: String?,
-        override val header: String?,
-        override val request: String?,
-        override val response: String?,
+        override val requestHeader: String? = null,
+        override val requestBody: String?,
+        override val responseHeader: String?,
+        override val responseBody: String?,
         override val status: Int?,
         override val method: String?,
-    ) : HttpRequestState(id, timeSignMillis, url, header, request, response)
+    ) : HttpRequestState(id, timeSignMillis, url, responseHeader, requestBody, responseBody)
 
     companion object {
+        private val json = Json {
+            prettyPrint = true
+        }
+
         fun beginWith(pipeline: PipelineContext<Any, HttpRequestBuilder>, data: Any): HttpRequestState {
             // inject RequestId to attribute
             val requestId = with(pipeline.context.attributes) {
@@ -163,8 +176,8 @@ sealed class HttpRequestState(
             return Executing(
                 id = requestId.toString(),
                 url = pipeline.context.url.buildString(),
-                header = pipeline.context.headers.build().toString(),
-                request = pipeline.context.body.toString(),
+                responseHeader = pipeline.context.headers.build().toString(),
+                requestBody = pipeline.context.body.toString(),
                 method = pipeline.context.method.value,
             )
         }
@@ -174,13 +187,39 @@ sealed class HttpRequestState(
             data: HttpResponseContainer
         ): HttpRequestState {
             val requestId = pipeline.context.attributes[AttributeKey<Long>("RequestId")]
-
+            val requestHeader: String = run {
+                pipeline.context.request.headers.toString()
+                    .replace("[", "")
+                    .replace("]", "")
+                    .split(",")
+                    .joinToString("\n") {
+                        it.replaceFirst("^\\s+".toRegex(), "")
+                    }
+            }
+            val requestBody: String = run {
+                pipeline.context.request.content.toString()
+            }
+            val responseHeader: String = run {
+                pipeline.context.response.headers.toString()
+                    .replace("[", "")
+                    .replace("]", "")
+                    .split(",")
+                    .joinToString("\n") {
+                        it.replaceFirst("^\\s+".toRegex(), "")
+                    }
+            }
+            val response: String = run {
+                val type = data.expectedType.kotlinType ?: return@run data.response.toString()
+                val serializer = Json.serializersModule.serializer(type)
+                json.encodeToString(serializer, data.response)
+            }
             return Success(
                 id = requestId.toString(),
                 url = pipeline.context.request.url.toString(),
-                header = pipeline.context.request.headers.toString(),
-                request = pipeline.context.request.content.toString(),
-                response = data.response.toString(),
+                requestHeader = requestHeader,
+                requestBody = requestBody,
+                responseHeader = responseHeader,
+                responseBody = response,
                 status = pipeline.context.response.status.value,
                 method = pipeline.context.request.method.value,
             )

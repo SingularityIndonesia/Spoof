@@ -35,10 +35,11 @@ data class ErrorItemDisplay(
 fun ErrorItem(
     modifier: Modifier = Modifier,
     item: ErrorItemDisplay,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onClick: () -> Unit,
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorError)) {
-        StatusItem(modifier, onClick, item.executionTime, item.status, item.url, item.method)
+        StatusItem(modifier, onClick, contentPadding, item.executionTime, item.status, item.url, item.method)
     }
 }
 
@@ -64,10 +65,11 @@ data class ExecutingItemDisplay(
 fun ExecutingItem(
     modifier: Modifier = Modifier,
     item: ExecutingItemDisplay,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onClick: () -> Unit,
 ) {
     CompositionLocalProvider(LocalContentColor provides Color.White) {
-        StatusItem(modifier, onClick, item.executionTime, item.status, item.url, item.method)
+        StatusItem(modifier, onClick, contentPadding, item.executionTime, item.status, item.url, item.method)
     }
 }
 
@@ -93,10 +95,11 @@ data class SpoofedItemDisplay(
 fun SpoofedItem(
     modifier: Modifier = Modifier,
     item: SpoofedItemDisplay,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onClick: () -> Unit,
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorSpoofed)) {
-        StatusItem(modifier, onClick, item.executionTime, item.status, item.url, item.method)
+        StatusItem(modifier, onClick, contentPadding, item.executionTime, item.status, item.url, item.method)
     }
 }
 
@@ -122,10 +125,11 @@ data class SuccessItemDisplay(
 fun SuccessItem(
     modifier: Modifier = Modifier,
     item: SuccessItemDisplay,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onClick: () -> Unit,
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorSuccess)) {
-        StatusItem(modifier, onClick, item.executionTime, item.status, item.url, item.method)
+        StatusItem(modifier, onClick, contentPadding, item.executionTime, item.status, item.url, item.method)
     }
 }
 
@@ -133,6 +137,7 @@ fun SuccessItem(
 fun StatusItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    contentPadding: PaddingValues,
     executionTime: String,
     status: String,
     url: String,
@@ -143,7 +148,7 @@ fun StatusItem(
             .clickable {
                 onClick.invoke()
             }
-            .padding(vertical = 16.dp, horizontal = 16.dp),
+            .padding(contentPadding),
     ) {
         Row {
             Text(text = method.uppercase(), color = Color.White)
