@@ -23,7 +23,6 @@ fun RequestPane(
 ) {
     val record by SnifferDB.httpRequests.collectAsStateWithLifecycle(emptyList())
     val transaction by rememberUpdatedState(record.firstOrNull { it.id == id } as? HttpRequestState ?: return)
-    val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
@@ -104,7 +103,6 @@ fun RequestPane(
         ) {
             LazyColumn(
                 modifier = Modifier
-                    .verticalScroll(scrollState)
                     .padding(horizontal = 16.dp),
             ) {
                 item {
