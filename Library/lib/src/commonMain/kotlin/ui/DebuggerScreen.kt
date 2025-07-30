@@ -1,8 +1,9 @@
 package ui
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
@@ -55,7 +56,10 @@ fun MainNavigation(
         ) {
             val id = it.savedStateHandle.get<String>("id") ?: return@composable
             RequestPane(
-                id = id
+                id = id,
+                onBack = {
+                    controller.popBackStack()
+                }
             )
         }
     }

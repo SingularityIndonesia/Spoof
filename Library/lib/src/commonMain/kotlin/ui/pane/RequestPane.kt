@@ -11,101 +11,109 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import data.HttpRequestState
 import data.SnifferDB
+import io.github.stefanusayudha.spoof.lib.generated.resources.Res
+import io.github.stefanusayudha.spoof.lib.generated.resources.ic_arrow_back_24
+import org.jetbrains.compose.resources.painterResource
 import ui.component.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RequestPane(
-    modifier: Modifier = Modifier,
-    id: String
+    id: String,
+    onBack: () -> Unit
 ) {
     val record by SnifferDB.httpRequests.collectAsStateWithLifecycle(emptyList())
     val transaction by rememberUpdatedState(record.firstOrNull { it.id == id } as? HttpRequestState ?: return)
 
     Scaffold(
         topBar = {
-            Column(
-                modifier = Modifier.statusBarsPadding()
-            ) {
-                when (val tr = transaction) {
-                    is HttpRequestState.Error -> {
-                        ErrorItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp),
-                            item = ErrorItemDisplay.from(tr),
-                            onShare = {
-
-                            },
-                            onDelete = {
-
-                            }
-                        ) {
-
-                        }
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBack
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_arrow_back_24),
+                            contentDescription = null
+                        )
                     }
-
-                    is HttpRequestState.Executing -> {
-                        ExecutingItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp),
-                            item = ExecutingItemDisplay.from(tr),
-                            onShare = {
-
-                            },
-                            onDelete = {
-
-                            }
-                        ) {
-
-                        }
-                    }
-
-                    is HttpRequestState.Spoofed -> {
-                        SpoofedItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp),
-                            item = SpoofedItemDisplay.from(tr),
-                            onShare = {
-
-                            },
-                            onDelete = {
-
-                            }
-                        ) {
-
-                        }
-                    }
-
-                    is HttpRequestState.Success -> {
-                        SuccessItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(top = 16.dp, start = 16.dp, end = 16.dp),
-                            item = SuccessItemDisplay.from(tr),
-                            onShare = {
-
-                            },
-                            onDelete = {
-
-                            }
-                        ) {
-
-                        }
-                    }
+                },
+                title = {
+                    Text("Transaction")
                 }
-            }
+            )
         },
         bottomBar = {
             Box(modifier = Modifier.navigationBarsPadding())
         }
     ) {
-        Surface(
+        Column (
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
         ) {
+            when (val tr = transaction) {
+                is HttpRequestState.Error -> {
+                    ErrorItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
+                        item = ErrorItemDisplay.from(tr),
+                        onShare = {
+
+                        },
+                        onDelete = {
+
+                        }
+                    )
+                }
+
+                is HttpRequestState.Executing -> {
+                    ExecutingItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
+                        item = ExecutingItemDisplay.from(tr),
+                        onShare = {
+
+                        },
+                        onDelete = {
+
+                        }
+                    )
+                }
+
+                is HttpRequestState.Spoofed -> {
+                    SpoofedItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
+                        item = SpoofedItemDisplay.from(tr),
+                        onShare = {
+
+                        },
+                        onDelete = {
+
+                        }
+                    ) {
+
+                    }
+                }
+
+                is HttpRequestState.Success -> {
+                    SuccessItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
+                        item = SuccessItemDisplay.from(tr),
+                        onShare = {
+
+                        },
+                        onDelete = {
+
+                        }
+                    )
+                }
+            }
             LazyColumn(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
+                modifier = Modifier,
+                contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
                 stickyHeader {
                     Surface {

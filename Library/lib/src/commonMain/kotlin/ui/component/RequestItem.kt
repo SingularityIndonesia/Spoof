@@ -42,7 +42,7 @@ fun ErrorItem(
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onDelete: (() -> Unit)? = null,
     onShare: (() -> Unit)? = null,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorError)) {
         StatusItem(
@@ -84,7 +84,7 @@ fun ExecutingItem(
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onDelete: (() -> Unit)? = null,
     onShare: (() -> Unit)? = null,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     CompositionLocalProvider(LocalContentColor provides Color.White) {
         StatusItem(
@@ -126,7 +126,7 @@ fun SpoofedItem(
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onDelete: (() -> Unit)? = null,
     onShare: (() -> Unit)? = null,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorSpoofed)) {
         StatusItem(
@@ -168,7 +168,7 @@ fun SuccessItem(
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
     onDelete: (() -> Unit)? = null,
     onShare: (() -> Unit)? = null,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     CompositionLocalProvider(LocalContentColor provides Color(colorSuccess)) {
         StatusItem(
@@ -192,16 +192,20 @@ fun StatusItem(
     status: String,
     url: String,
     method: String,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     onDelete: (() -> Unit)? = null,
     onShare: (() -> Unit)? = null,
     contentPadding: PaddingValues,
 ) {
     Column(
         modifier = modifier
-            .clickable {
-                onClick.invoke()
-            },
+            .then(
+                other = if (onClick != null)
+                    Modifier.clickable {
+                        onClick.invoke()
+                    }
+                else Modifier
+            ),
     ) {
         Spacer(modifier.height(contentPadding.calculateTopPadding()))
         Row(
