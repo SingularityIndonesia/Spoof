@@ -1,6 +1,7 @@
 package ui.pane
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -101,66 +102,76 @@ fun RequestPane(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .verticalScroll(scrollState)
                     .padding(horizontal = 16.dp),
             ) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Request",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Header",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = transaction.requestHeader.orEmpty(),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Content",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = transaction.requestBody.orEmpty(),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "Response",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Header",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = transaction.responseHeader.orEmpty(),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Content",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = transaction.responseBody.orEmpty(),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                stickyHeader {
+                    Text(
+                        text = "Request",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Header",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = transaction.requestHeader.orEmpty(),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Content",
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = transaction.requestBody.orEmpty(),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+                stickyHeader {
+                    Text(
+                        text = "Response",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Header",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = transaction.responseHeader.orEmpty(),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Content",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = transaction.responseBody.orEmpty(),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
     }
