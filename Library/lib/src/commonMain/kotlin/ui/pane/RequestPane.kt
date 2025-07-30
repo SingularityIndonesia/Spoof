@@ -2,8 +2,6 @@ package ui.pane
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -105,17 +103,19 @@ fun RequestPane(
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
             ) {
+                stickyHeader {
+                    Surface {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            text = "Request",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                }
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
-                }
-                stickyHeader {
-                    Text(
-                        text = "Request",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Header",
                         style = MaterialTheme.typography.titleMedium
@@ -137,16 +137,21 @@ fun RequestPane(
                         text = transaction.requestBody.orEmpty(),
                         style = MaterialTheme.typography.bodySmall
                     )
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
                 stickyHeader {
-                    Text(
-                        text = "Response",
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    Surface {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            text = "Response",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
                 }
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Header",
                         style = MaterialTheme.typography.titleMedium
