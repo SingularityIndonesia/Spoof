@@ -1,5 +1,6 @@
 package ui.pane
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import data.HttpRequestState
 import data.SnifferDB
@@ -41,6 +43,7 @@ fun RequestListPane(
                         is HttpRequestState.Error -> {
                             ErrorItem(
                                 modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(vertical = 16.dp),
                                 item = ErrorItemDisplay.from(it),
                                 onClick = { onClick.invoke(it.id) },
                             )
@@ -49,6 +52,7 @@ fun RequestListPane(
                         is HttpRequestState.Executing -> {
                             ExecutingItem(
                                 modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(vertical = 16.dp),
                                 item = ExecutingItemDisplay.from(it),
                                 onClick = { onClick.invoke(it.id) },
                             )
@@ -57,6 +61,7 @@ fun RequestListPane(
                         is HttpRequestState.Spoofed -> {
                             SpoofedItem(
                                 modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(vertical = 16.dp),
                                 item = SpoofedItemDisplay.from(it),
                                 onClick = { onClick.invoke(it.id) },
                             )
@@ -65,6 +70,7 @@ fun RequestListPane(
                         is HttpRequestState.Success -> {
                             SuccessItem(
                                 modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(vertical = 16.dp),
                                 item = SuccessItemDisplay.from(it),
                                 onClick = { onClick.invoke(it.id) },
                             )

@@ -31,6 +31,7 @@ fun RequestPane(
                     is HttpRequestState.Error -> {
                         ErrorItem(
                             modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(top = 16.dp),
                             item = ErrorItemDisplay.from(tr),
                             onShare = {
 
@@ -46,6 +47,7 @@ fun RequestPane(
                     is HttpRequestState.Executing -> {
                         ExecutingItem(
                             modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(top = 16.dp),
                             item = ExecutingItemDisplay.from(tr),
                             onShare = {
 
@@ -61,6 +63,7 @@ fun RequestPane(
                     is HttpRequestState.Spoofed -> {
                         SpoofedItem(
                             modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(top = 16.dp),
                             item = SpoofedItemDisplay.from(tr),
                             onShare = {
 
@@ -76,6 +79,7 @@ fun RequestPane(
                     is HttpRequestState.Success -> {
                         SuccessItem(
                             modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(top = 16.dp),
                             item = SuccessItemDisplay.from(tr),
                             onShare = {
 
