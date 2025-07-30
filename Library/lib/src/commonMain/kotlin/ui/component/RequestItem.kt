@@ -203,6 +203,7 @@ fun StatusItem(
                 onClick.invoke()
             },
     ) {
+        Spacer(modifier.height(contentPadding.calculateTopPadding()))
         Row(
             modifier = Modifier.padding(
                 start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
@@ -267,5 +268,6 @@ fun StatusItem(
                         )
                     }
             }
+        Spacer(modifier.height(contentPadding.calculateBottomPadding()))
     }
 }

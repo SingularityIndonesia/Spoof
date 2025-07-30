@@ -43,7 +43,7 @@ fun RequestListPane(
                         is HttpRequestState.Error -> {
                             ErrorItem(
                                 modifier = Modifier.fillMaxWidth(),
-                                contentPadding = PaddingValues(vertical = 16.dp),
+                                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
                                 item = ErrorItemDisplay.from(it),
                                 onClick = { onClick.invoke(it.id) },
                             )
@@ -52,7 +52,7 @@ fun RequestListPane(
                         is HttpRequestState.Executing -> {
                             ExecutingItem(
                                 modifier = Modifier.fillMaxWidth(),
-                                contentPadding = PaddingValues(vertical = 16.dp),
+                                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
                                 item = ExecutingItemDisplay.from(it),
                                 onClick = { onClick.invoke(it.id) },
                             )
@@ -61,7 +61,7 @@ fun RequestListPane(
                         is HttpRequestState.Spoofed -> {
                             SpoofedItem(
                                 modifier = Modifier.fillMaxWidth(),
-                                contentPadding = PaddingValues(vertical = 16.dp),
+                                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
                                 item = SpoofedItemDisplay.from(it),
                                 onClick = { onClick.invoke(it.id) },
                             )
@@ -70,7 +70,7 @@ fun RequestListPane(
                         is HttpRequestState.Success -> {
                             SuccessItem(
                                 modifier = Modifier.fillMaxWidth(),
-                                contentPadding = PaddingValues(vertical = 16.dp),
+                                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 16.dp),
                                 item = SuccessItemDisplay.from(it),
                                 onClick = { onClick.invoke(it.id) },
                             )
